@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Currency Converter</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+		}
+		form {
+			margin-bottom: 20px;
+		}
+		label {
+			margin-right: 5px;
+		}
+		select, input, button {
+			margin-top: 5px;
+		}
+		button {
+			padding: 5px 10px;
+		}
+		#result {
+			margin-top: 10px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+
+<body>
+	<div>
+		<form id="converter-form">
+			<label for="from">From:</label>
+			<select id="from">
+				<option value="INR">INR</option>
+				<option value="USD">USD</option>
+				<option value="EUR">EUR</option>
+				<option value="AUD">AUD</option>
+			</select>
+
+			<label for="to">To:</label>
+			<select id="to">
+				<option value="INR">INR</option>
+				<option value="USD">USD</option>
+				<option value="EUR">EUR</option>
+				<option value="AUD">AUD</option>
+			</select>
+
+			<label for="amount">Amount:</label>
+			<input type="text" id="amount">	
+
+			<button type="button" id="convert">Convert</button>
+
+			<p id="result"></p>
+		</form>
+	</div>
+
+	<script>
+		const form = document.getElementById("converter-form");
+		const from = document.getElementById("from");
+		const to = document.getElementById("to");
+		const amount = document.getElementById("amount");
+		const result = document.getElementById("result");
+
+		form.addEventListener("submit", function(event) {
+			event.preventDefault();
+			convertCurrency();
+		});
+
+		function convertCurrency() {
+			const fromCurrency = from.value;
+			const toCurrency = to.value;
+			const amt = amount.value;
+
+			fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`)
+				.then(response => response.json())
+				.then(data => {
+					const rate = data.rates[toCurrency];
+					const totalResult = rate * amt;
+					result.textContent = `${amt} ${fromCurrency} = ${totalResult} ${toCurrency}`;
+				})
+				.catch(error => {
+					result.textContent = "An error occurred while fetching the exchange rate.";
+					console.error(error);
+				});
+		}
+	</script>
+</body>
+</html>
